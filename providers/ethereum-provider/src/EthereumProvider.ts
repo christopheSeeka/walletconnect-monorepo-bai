@@ -64,7 +64,7 @@ export interface EthereumRpcConfig {
   rpcMap: EthereumRpcMap;
   projectId: string;
   metadata?: Metadata;
-  showQrModal: boolean;
+  showQrModal: any;
   qrModalOptions?: QrModalOptions;
 }
 export interface ConnectOps {
@@ -205,7 +205,7 @@ export type EthereumProviderOptions = {
   optionalEvents?: string[];
   rpcMap?: EthereumRpcMap;
   metadata?: Metadata;
-  showQrModal: boolean;
+  showQrModal: any;
   qrModalOptions?: QrModalOptions;
   disableProviderPing?: boolean;
   relayUrl?: string;
@@ -272,7 +272,7 @@ export class EthereumProvider implements IEthereumProvider {
     try {
       const session = await new Promise<SessionTypes.Struct | undefined>(
         async (resolve, reject) => {
-          if (this.rpc.showQrModal) {
+          if (this.rpc.showQrModal!=null) {
             this.modal?.subscribeModal((state: { open: boolean }) => {
               // the modal was closed so reject the promise
               if (!state.open && !this.signer.session) {
@@ -398,7 +398,7 @@ export class EthereumProvider implements IEthereumProvider {
     );
 
     this.signer.on("display_uri", (uri: string) => {
-      if (this.rpc.showQrModal) {
+      if (this.rpc.showQrModal!=null) {
         // to refresh the QR we have to close the modal and open it again
         // until proper API is provided by walletconnect modal
         this.modal?.closeModal();
@@ -478,7 +478,7 @@ export class EthereumProvider implements IEthereumProvider {
       optionalMethods,
       optionalEvents,
       rpcMap,
-      showQrModal: Boolean(opts?.showQrModal),
+      showQrModal: null,
       qrModalOptions,
       projectId: opts.projectId,
       metadata: opts.metadata,
@@ -507,14 +507,14 @@ export class EthereumProvider implements IEthereumProvider {
     });
     this.registerEventListeners();
     await this.loadPersistedSession();
-    if (this.rpc.showQrModal) {
-      let WalletConnectModalClass;
-      try {
+    if (this.rpc.showQrModal != null) {
+      let WalletConnectModalClass = this.rpc.showQrModal
+      /* try {
         const WalletConnectModal = require("@walletconnect/modal").WalletConnectModal;
         WalletConnectModalClass = WalletConnectModal;
       } catch {
         throw new Error("To use QR modal, please install @walletconnect/modal package");
-      }
+      } */
       if (WalletConnectModalClass) {
         try {
           this.modal = new WalletConnectModalClass({
